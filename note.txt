@@ -1,0 +1,28 @@
+
+flink run -t yarn-per-job -c .... xxx.jar
+
+CliFrontend
+	参数解析
+	封装CommandLine：三个，依次添加
+	配置的封装
+	执行用户代码： execute()
+	生成StreamGraph
+	Executor：生成JobGraph
+	集群描述器：上传jar包、配置， 封装提交给yarn的命令
+	yarnclient提交应用
+	
+YarnJobClusterEntryPoint：AM执行的入口类
+	1、Dispatcher的创建和启动
+	2、ResourceManager的创建、启动：里面有一个 slotmanager（真正管理资源的、向yarn申请资源）
+	3、Dispatcher启动JobMaster：生成ExecutionGraph（里面有一个slotpool，真正去发送请求的）
+	4、slotpool向slotmanager申请资源， slotmanager向yarn申请资源（启动新节点）
+	
+YarnTaskExecutorRunner：Yarn模式下的TaskManager的入口类
+	1、启动 TaskExecutor
+	2、向ResourceManager注册slot
+	3、ResourceManager分配slot
+	4、TaskExecutor接收到分配的指令，提供offset给JobMaster（slotpool）
+	5、JobMaster提交任务给TaskExecutor去执行
+	
+	
+	
