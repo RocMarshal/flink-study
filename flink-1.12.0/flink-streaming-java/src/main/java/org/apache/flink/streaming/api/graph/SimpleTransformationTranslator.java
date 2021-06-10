@@ -55,6 +55,7 @@ public abstract class SimpleTransformationTranslator<OUT, T extends Transformati
 		checkNotNull(transformation);
 		checkNotNull(context);
 
+		// 区分 map之类的转换算子（OneInput） 和 keyby值类的分区算子（partition）
 		final Collection<Integer> transformedIds =
 				translateForStreamingInternal(transformation, context);
 		configure(transformation, context);

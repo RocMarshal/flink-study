@@ -613,6 +613,7 @@ public class DataStream<T> {
 	 * @return The transformed {@link DataStream}.
 	 */
 	public <R> SingleOutputStreamOperator<R> map(MapFunction<T, R> mapper, TypeInformation<R> outputType) {
+		// 返回一个新的DataStream，StreamMap 为 StreamOperator 的实现类
 		return transform("Map", outputType, new StreamMap<>(clean(mapper)));
 	}
 

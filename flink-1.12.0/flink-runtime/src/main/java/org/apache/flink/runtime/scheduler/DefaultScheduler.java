@@ -196,6 +196,7 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 	protected void startSchedulingInternal() {
 		log.info("Starting scheduling with scheduling strategy [{}]", schedulingStrategy.getClass().getName());
 		prepareExecutionGraphForNgScheduling();
+		// 新版本中，默认的调度策略是 PipelinedRegion
 		schedulingStrategy.startScheduling();
 	}
 
@@ -499,7 +500,9 @@ public class DefaultScheduler extends SchedulerBase implements SchedulerOperatio
 
 	private void deployTaskSafe(final ExecutionVertexID executionVertexId) {
 		try {
+			// 通过执行图的节点ID获取执行图的节点
 			final ExecutionVertex executionVertex = getExecutionVertex(executionVertexId);
+			/*TODO 部署执行图节点 */
 			executionVertexOperations.deploy(executionVertex);
 		} catch (Throwable e) {
 			handleTaskDeploymentFailure(executionVertexId, e);

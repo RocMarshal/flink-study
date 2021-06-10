@@ -535,6 +535,7 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 	 * Starts the task's thread.
 	 */
 	public void startTaskThread() {
+		/*TODO 接下来启动Task执行线程，调用Task.run() -> doRun()*/
 		executingThread.start();
 	}
 
@@ -697,6 +698,7 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 			executingThread.setContextClassLoader(userCodeClassLoader.asClassLoader());
 
 			// now load and instantiate the task's invokable code
+			/*TODO 加载和实例化task的可执行代码*/
 			invokable = loadAndInstantiateInvokable(userCodeClassLoader.asClassLoader(), nameOfInvokableClass, env);
 
 			// ----------------------------------------------------------------
@@ -719,6 +721,7 @@ public class Task implements Runnable, TaskSlotPayload, TaskActions, PartitionPr
 			executingThread.setContextClassLoader(userCodeClassLoader.asClassLoader());
 
 			// run the invokable
+			/*TODO 执行代码（ invokable即为operator对象实例，比如 StreamTask里）*/
 			invokable.invoke();
 
 			// make sure, we enter the catch block if the task leaves the invoke() method due

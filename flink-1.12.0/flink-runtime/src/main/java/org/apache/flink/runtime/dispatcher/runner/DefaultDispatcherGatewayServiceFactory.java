@@ -59,6 +59,7 @@ class DefaultDispatcherGatewayServiceFactory implements AbstractDispatcherLeader
 
 		final Dispatcher dispatcher;
 		try {
+			/*TODO 创建Dispatcher*/
 			dispatcher = dispatcherFactory.createDispatcher(
 				rpcService,
 				fencingToken,
@@ -69,6 +70,7 @@ class DefaultDispatcherGatewayServiceFactory implements AbstractDispatcherLeader
 			throw new FlinkRuntimeException("Could not create the Dispatcher rpc endpoint.", e);
 		}
 
+		/*TODO 启动 Dispatcher，接着看 onStart()*/
 		dispatcher.start();
 
 		return DefaultDispatcherGatewayService.from(dispatcher);

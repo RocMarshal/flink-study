@@ -506,6 +506,7 @@ public class StreamGraph implements Pipeline {
 			OutputTag outputTag,
 			ShuffleMode shuffleMode) {
 
+		/*TODO 当上游是侧输出时，递归调用，并传入侧输出信息*/
 		if (virtualSideOutputNodes.containsKey(upStreamVertexID)) {
 			int virtualId = upStreamVertexID;
 			upStreamVertexID = virtualSideOutputNodes.get(virtualId).f0;
@@ -514,6 +515,7 @@ public class StreamGraph implements Pipeline {
 			}
 			addEdgeInternal(upStreamVertexID, downStreamVertexID, typeNumber, partitioner, null, outputTag, shuffleMode);
 		} else if (virtualPartitionNodes.containsKey(upStreamVertexID)) {
+			/*TODO 当上游是partition时，递归调用，并传入partitioner信息*/
 			int virtualId = upStreamVertexID;
 			upStreamVertexID = virtualPartitionNodes.get(virtualId).f0;
 			if (partitioner == null) {
@@ -522,17 +524,20 @@ public class StreamGraph implements Pipeline {
 			shuffleMode = virtualPartitionNodes.get(virtualId).f2;
 			addEdgeInternal(upStreamVertexID, downStreamVertexID, typeNumber, partitioner, outputNames, outputTag, shuffleMode);
 		} else {
+			/*TODO 真正构建StreamEdge*/
 			StreamNode upstreamNode = getStreamNode(upStreamVertexID);
 			StreamNode downstreamNode = getStreamNode(downStreamVertexID);
 
 			// If no partitioner was specified and the parallelism of upstream and downstream
 			// operator matches use forward partitioning, use rebalance otherwise.
+			/*TODO 未指定partitioner的话，会为其选择 forward 或 rebalance 分区*/
 			if (partitioner == null && upstreamNode.getParallelism() == downstreamNode.getParallelism()) {
 				partitioner = new ForwardPartitioner<Object>();
 			} else if (partitioner == null) {
 				partitioner = new RebalancePartitioner<Object>();
 			}
 
+			// 健康检查，forward 分区必须要上下游的并发度一致
 			if (partitioner instanceof ForwardPartitioner) {
 				if (upstreamNode.getParallelism() != downstreamNode.getParallelism()) {
 					throw new UnsupportedOperationException("Forward partitioning does not allow " +
@@ -546,9 +551,11 @@ public class StreamGraph implements Pipeline {
 				shuffleMode = ShuffleMode.UNDEFINED;
 			}
 
+			/*TODO 创建 StreamEdge*/
 			StreamEdge edge = new StreamEdge(upstreamNode, downstreamNode, typeNumber,
 				partitioner, outputTag, shuffleMode);
 
+			/*TODO 将该 StreamEdge 添加到上游的输出，下游的输入*/
 			getStreamNode(edge.getSourceId()).addOutEdge(edge);
 			getStreamNode(edge.getTargetId()).addInEdge(edge);
 		}

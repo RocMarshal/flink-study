@@ -734,6 +734,8 @@ public class Execution implements AccessExecution, Archiveable<ArchivedExecution
 					"Rescaling from unaligned checkpoint is not yet supported.");
 			}
 
+			// 将 IntermediateResultPartition 转化成 ResultPartition
+			// 将 ExecutionEdge 转成 InputChannelDeploymentDescriptor（最终会在执行时转化成InputGate）
 			final TaskDeploymentDescriptor deployment = TaskDeploymentDescriptorFactory
 				.fromExecutionVertex(vertex, attemptNumber)
 				.createDeploymentDescriptor(

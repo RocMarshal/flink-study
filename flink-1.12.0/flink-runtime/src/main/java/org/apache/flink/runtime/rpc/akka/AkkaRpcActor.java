@@ -151,6 +151,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 			mainThreadValidator.enterMainThread();
 
 			try {
+				// 处理RPC消息
 				handleRpcMessage(message);
 			} finally {
 				mainThreadValidator.exitMainThread();
@@ -223,6 +224,7 @@ class AkkaRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
 					"The rpc endpoint does not support the gateway %s.",
 					handshakeMessage.getRpcGateway().getSimpleName())));
 		} else {
+			// tell的方式回应
 			getSender().tell(new Status.Success(HandshakeSuccessMessage.INSTANCE), getSelf());
 		}
 	}

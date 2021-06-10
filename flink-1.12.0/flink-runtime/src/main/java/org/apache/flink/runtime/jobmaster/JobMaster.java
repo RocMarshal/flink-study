@@ -307,6 +307,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 		this.shuffleMaster = checkNotNull(shuffleMaster);
 
 		this.jobManagerJobMetricGroup = jobMetricGroupFactory.create(jobGraph);
+		/*TODO 创建 调度器，创建的时候把 JobGraph转换成 ExecutionGraph*/
 		this.schedulerNG = createScheduler(executionDeploymentTracker, jobManagerJobMetricGroup);
 		this.jobStatusListener = null;
 
@@ -353,7 +354,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 	public CompletableFuture<Acknowledge> start(final JobMasterId newJobMasterId) throws Exception {
 		// make sure we receive RPC and async calls
 		start();
-
+		/*TODO 异步不阻塞 调用*/
 		return callAsyncWithoutFencing(() -> startJobExecution(newJobMasterId), RpcUtils.INF_TIMEOUT);
 	}
 
@@ -794,19 +795,23 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 
 		setNewFencingToken(newJobMasterId);
 
+		/*TODO 真正启动JobMaster服务*/
 		startJobMasterServices();
 
 		log.info("Starting execution of job {} ({}) under job master id {}.", jobGraph.getName(), jobGraph.getJobID(), newJobMasterId);
 
+		/*TODO 重置和启动调度器*/
 		resetAndStartScheduler();
 
 		return Acknowledge.get();
 	}
 
 	private void startJobMasterServices() throws Exception {
+		/*TODO 启动心跳服务：taskmanager、resourcemanager*/
 		startHeartbeatServices();
 
 		// start the slot pool make sure the slot pool now accepts messages for this leader
+		/*TODO 启动 slotpool*/
 		slotPool.start(getFencingToken(), getAddress(), getMainThreadExecutor());
 
 		//TODO: Remove once the ZooKeeperLeaderRetrieval returns the stored address upon start
@@ -817,6 +822,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 		//   - activate leader retrieval for the resource manager
 		//   - on notification of the leader, the connection will be established and
 		//     the slot pool will start requesting slots
+		/*TODO 与ResourceManager建立连接，slotpool开始请求资源*/
 		resourceManagerLeaderRetriever.start(new ResourceManagerLeaderListener());
 	}
 
@@ -1057,6 +1063,7 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 				resourceManagerGateway,
 				resourceManagerResourceId);
 
+			/*TODO slotpool连接到ResourceManager，请求资源*/
 			slotPool.connectToResourceManager(resourceManagerGateway);
 
 			resourceManagerHeartbeatManager.monitorTarget(resourceManagerResourceId, new HeartbeatTarget<Void>() {

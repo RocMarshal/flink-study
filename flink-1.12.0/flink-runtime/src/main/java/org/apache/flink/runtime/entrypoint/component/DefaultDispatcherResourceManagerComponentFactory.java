@@ -163,6 +163,7 @@ public class DefaultDispatcherResourceManagerComponentFactory implements Dispatc
 
 			final String hostname = RpcUtils.getHostname(rpcService);
 
+			/*TODO 创建 ResourceManager：Yarn模式的 ResourceManager*/
 			resourceManager = resourceManagerFactory.createResourceManager(
 				configuration,
 				ResourceID.generate(),
@@ -192,6 +193,7 @@ public class DefaultDispatcherResourceManagerComponentFactory implements Dispatc
 				ioExecutor);
 
 			log.debug("Starting Dispatcher.");
+			/*TODO 创建和启动 Dispatcher => dispatcher会创建和启动JobMaster*/
 			dispatcherRunner = dispatcherRunnerFactory.createDispatcherRunner(
 				highAvailabilityServices.getDispatcherLeaderElectionService(),
 				fatalErrorHandler,
@@ -201,6 +203,7 @@ public class DefaultDispatcherResourceManagerComponentFactory implements Dispatc
 				partialDispatcherServices);
 
 			log.debug("Starting ResourceManager.");
+			/*TODO 启动 ResourceManager*/
 			resourceManager.start();
 
 			resourceManagerRetrievalService.start(resourceManagerGatewayRetriever);

@@ -215,7 +215,10 @@ public class CliFrontend {
 	protected void run(String[] args) throws Exception {
 		LOG.info("Running 'run' command.");
 
+		/*TODO 获取run动作，默认的配置项*/
 		final Options commandOptions = CliFrontendParser.getRunCommandOptions();
+
+		/*TODO 根据用户指定的配置项，进行解析*/
 		final CommandLine commandLine = getCommandLine(commandOptions, args, true);
 
 		// evaluate help flag
@@ -224,13 +227,16 @@ public class CliFrontend {
 			return;
 		}
 
+		/*TODO 根据之前添加的顺序，挨个判断是否active：Generic、Yarn、Default*/
 		final CustomCommandLine activeCommandLine =
 				validateAndGetActiveCommandLine(checkNotNull(commandLine));
 
 		final ProgramOptions programOptions = ProgramOptions.create(commandLine);
 
+		/*TODO 获取 用户的jar包和其他依赖*/
 		final List<URL> jobJars = getJobJarAndDependencies(programOptions);
 
+		/*TODO 获取有效配置：HA的id、Target（session、per-job）、JobManager内存、TaskManager内存、每个TM的slot数...*/
 		final Configuration effectiveConfiguration = getEffectiveConfiguration(
 				activeCommandLine, commandLine, programOptions, jobJars);
 
@@ -239,6 +245,7 @@ public class CliFrontend {
 		final PackagedProgram program = getPackagedProgram(programOptions, effectiveConfiguration);
 
 		try {
+			/*TODO 执行程序*/
 			executeProgram(effectiveConfiguration, program);
 		} finally {
 			program.deleteExtractedLibraries();
@@ -1027,12 +1034,15 @@ public class CliFrontend {
 		EnvironmentInformation.logEnvironmentInfo(LOG, "Command Line Client", args);
 
 		// 1. find the configuration directory
+		/*TODO 获取flink的conf目录的路径*/
 		final String configurationDirectory = getConfigurationDirectoryFromEnv();
 
 		// 2. load the global configuration
+		/*TODO 根据conf路径，加载配置*/
 		final Configuration configuration = GlobalConfiguration.loadConfiguration(configurationDirectory);
 
 		// 3. load the custom command lines
+		/*TODO 封装命令行接口：按顺序Generic、Yarn、Default*/
 		final List<CustomCommandLine> customCommandLines = loadCustomCommandLines(
 			configuration,
 			configurationDirectory);
